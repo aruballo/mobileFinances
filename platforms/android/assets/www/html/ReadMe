@@ -1,0 +1,21 @@
+Personal Finances Calculator. Uses the following:
+
+Calendar for relevant input fields:
+Pikaday.js
+
+Expanded Date Format Types:
+Moment.js
+
+jQuery:
+jQuery-2.1.1.js
+
+jQuery Plugin for Pagination and Sorting:
+jquery.tablesorter.js
+
+jQuery UI:
+jQuery UI - v1.11.1
+
+Charts:
+https://www.google.com/jsapi
+
+Assumes an SQL database of name '' with table '' and columns ''.

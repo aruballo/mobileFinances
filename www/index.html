@@ -24,21 +24,194 @@
         <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
         <link rel="stylesheet" type="text/css" href="css/index.css" />
-        <meta name="msapplication-tap-highlight" content="no" />
-        <title>Hello World</title>
+        <link rel="stylesheet" type="text/css" href="css/transactions.css">
+        <link rel="stylesheet" href="css/pikaday.css">
+        <link rel="stylesheet" href="css/jquery-ui.css">
+        <link rel="stylesheet" href="css/jquery-ui.theme.css">
+        <link rel="stylesheet" href="css/jquery-ui.structure.css">
+        <!--<meta name="msapplication-tap-highlight" content="no" />-->
+        <title>Finances Calculator</title>
     </head>
-    <body>
-        <div class="app">
-            <h1>Apache Cordova</h1>
-            <div id="deviceready" class="blink">
-                <p class="event listening">Connecting to Device</p>
-                <p class="event received">Device is Ready</p>
+    <body id="financesCalc" style="visibility:hidden;">
+        
+        <div id="tabs">   
+            <ul>
+                <li><a href="#tabs-1">Record</a></li>
+                <li><a href="#tabs-2">Chart</a></li>
+                <li><a href="#tabs-3">Grid</a></li>
+                <li><a href="#tabs-4">Yearly Chart</a></li>
+            </ul>
+            <div id="tabs-1">
+                <div id="transFormDiv">
+                    <form id="transForm" name="transForm">
+                    <div>
+                        <label for="transAmt"> Transaction Amount <br></label>   
+                        <input type="number" step="any" id="transAmt" name="transAmt"/>
+                    </div>
+                    <div>
+                        <label for="transCat"> Transaction Category <br></label>   
+                        <select name="transCat" id="transCat">
+                            <option value="groceries">Groceries</option>
+                            <option value="bills">Bills</option>
+                            <option value="gas">Gas</option>
+                            <option value="food">Food</option>
+                            <option value="misc">Miscellaneous (but needed)</option>
+                            <option value="fees">Fees</option>
+                            <option value="frivolous">Frivolous spending</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="transDate">Transaction Date <br></label>
+                        <input type="text" id="transDate" name="transDate" readonly>
+                    </div>    
+                    <div>
+                        <label for="transDesc">Transaction Description <br></label>
+                        <textarea rows="6" cols="50" name="transDesc" id="transDesc"></textarea>
+                    </div>
+                    <div>
+                        <button id="transSubmitBtn" type="button" onclick="recordTransaction()">Record </button>
+                    </div>    
+                    </form>
+                </div>
+            </div>    
+            <div id="tabs-2">    
+                <div id="chartFormDiv">
+                    <form id="chartForm">
+                        <div>
+                            <label for="chartMonth">Chart Month <br></label>   
+                            <select name="chartMonth" id="chartMonth">
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                             </select>
+                        </div>
+                        <div>
+                            <label for="chartYear"> Chart Year <br> </label>   
+                            <input type="number" step="1" name="chartYear" id="chartYear"/>
+                       </div>
+                       <div>
+                            <button id="chartTransBtn" type="button" onclick="chartTransactions()"> Chart Transactions</button>
+                       </div> 
+                    </form>
+                </div>
+                <div style="display:inline-block; position: relative; width: 90%; height: 60%; vertical-align: top">
+                    <div id="piechart" style="width: 90%; height: 60%;"></div>
+                    <div id="total" style="width: 90%"><strong>Total</strong>: $</div>
+                </div>
+            </div>    
+            <div id="tabs-3">
+                <div id="listFormDiv">
+                    <form id="listForm">
+                        <div>
+                            <label for="listMonth">List Month <br></label>   
+                            <select name="listMonth" id="listMonth">
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="listYear"> List Year <br> </label>   
+                            <input type="number" step="1" name="listYear" id="listYear"/>
+                        </div>
+                        <div>
+                            <button id="listTransBtn" type="button" onclick="listTransactions()"> List Transactions </button>
+                        </div> 
+                    </form>
+                </div>
+                <div style="display:inline-block">
+                    <div id="transTableDiv" style="display:inline-block">
+                    </div>
+                </div>    
             </div>
+            <div id="tabs-4">
+                <div id="yearAvgDiv">
+                    <form id="yearAvgForm">
+                        <div>
+                            <label for="yearAvg">Chart Year<br></label>   
+                            <select id="yearAvg" name="yearAvg" id="yearAvgChart">
+                                <option value="2014">2014</option>
+                                <option value="2013">2013</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="avgCat"> Average Category (optional) <br></label>   
+                            <select id="avgCat" name="avgCat">
+                                <option value=""></option>
+                                <option value="groceries">Groceries</option>
+                                <option value="bills">Bills</option>
+                                <option value="gas">Gas</option>
+                                <option value="food">Food</option>
+                                <option value="misc">Miscellaneous (but needed)</option>
+                                <option value="fees">Fees</option>
+                                <option value="frivolous">Frivolous spending</option>
+                            </select>
+                        </div>
+                        <div>
+                            <button id="listYearBtn" type="button" onclick="listYearAvg()"> List Year Average </button>
+                        </div> 
+                    </form>
+                </div>
+                <div style="display:inline-block; position: relative; width: 90%; height: 60%; vertical-align: top">
+                    <div id="barchart" style="width: 90%; height: 60%;"></div>
+                    <div id="total2" style="width: 90%"><strong>Total</strong>: $</div>
+                </div>
+            </div>    
         </div>
+        
+
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript">
             app.initialize();
         </script>
+        <script src="js/jquery-2.1.1.js"></script>
+        <script src="js/jquery-ui.js"></script>
+        <script>
+            $(document).ready(function(){
+               $("#tabs").tabs({heightStyle: "fill"}); 
+               $("#transSubmitBtn").button();
+               $("#chartTransBtn").button();
+               $("#listTransBtn").button();
+               $("#listYearBtn").button();
+               $.datepicker.setDefaults({
+                    showOn: "both",
+                    buttonImageOnly: true,
+                    buttonImage: "css/images/calendar-icon.png",
+                    buttonText: "Calendar",
+                    dateFormat: "yy-mm-dd"
+                    });
+               $("#transDate").datepicker();
+               
+            });
+        </script>
+        <script src="https://www.google.com/jsapi"></script>
+        <script src="js/httpRequest.js"></script>
+        <script src="js/recordTrans.js"></script>
+        <script src="js/listTrans.js"></script>
+        <script src="js/chartTrans.js"></script>
+        <script src="js/listYearChart.js"></script>
+        <script src="js/validateTransForm.js"></script>
+        <script src="js/deleteTrans.js"></script>
+        <script src="js/jquery.tablesorter.js"></script> 
+        <script src="js/jquery.tablesorter.pager.js"></script> 
     </body>
 </html>
